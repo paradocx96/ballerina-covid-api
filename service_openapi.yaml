@@ -1,0 +1,99 @@
+openapi: 3.0.1
+info:
+  title: Service Openapi Yaml
+  version: 0.1.0
+servers:
+- url: "{server}:{port}/"
+  variables:
+    server:
+      default: http://localhost
+    port:
+      default: "9090"
+paths:
+  /countries:
+    get:
+      operationId: operation_get_/countries
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CovidEntry'
+    post:
+      operationId: operation_post_/countries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CovidEntry'
+      responses:
+        "201":
+          description: Created
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+  /countries/{iso_code}:
+    get:
+      operationId: "operation_get_/countries/{iso_code}"
+      parameters:
+      - name: iso_code
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CovidEntry'
+        "404":
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMsg'
+components:
+  schemas:
+    CovidEntry:
+      required:
+      - active
+      - cases
+      - country
+      - deaths
+      - iso_code
+      - recovered
+      type: object
+      properties:
+        iso_code:
+          type: string
+        country:
+          type: string
+        cases:
+          type: number
+          format: double
+        deaths:
+          type: number
+          format: double
+        recovered:
+          type: number
+          format: double
+        active:
+          type: number
+          format: double
+    ErrorMsg:
+      required:
+      - errmsg
+      type: object
+      properties:
+        errmsg:
+          type: string
